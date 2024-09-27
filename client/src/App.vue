@@ -4,6 +4,7 @@ import { ref } from 'vue'
 var id = 0;
 
 var datePicker = ref(null)
+var dateButton = ref(false)
 
 var item = ref({
 	id: 0,
@@ -11,7 +12,7 @@ var item = ref({
 	description: "",
 	date: "",
 	priority: false,
-	catagory: ""
+	catagory: "Default"
 })
 
 var list = ref([
@@ -28,7 +29,7 @@ var list = ref([
 		task: "Feed Cats",
 		description: "feed",
 		date: "2024-01-25",
-		priority: false,
+		priority: true,
 		catagory: "test"
 	},
 	{
@@ -44,7 +45,14 @@ var list = ref([
 const addTask = () => {
 	if (item.value.task.trim() !== "") {
 		list.value.push(item.value)
-		item.value = { id: 0, task: "", description: "" }
+		item.value = {
+			id: 0,
+			task: "",
+			description: "",
+			date: "",
+			priority: false,
+			catagory: "Default"
+		}
 	}
 }
 
@@ -59,230 +67,109 @@ const clearTask = () => {
 		description: "",
 		date: "",
 		priority: false,
-		catagory: ""
+		catagory: "Default"
+	}
+	dateButton.value = false;
+}
+
+const setDate = (b) => {
+	if (b) {
+		dateButton.value = true;
+		datePicker.value.showPicker()
+	}
+	else {
+		dateButton.value = false;
+		datePicker.value.blur();
+		item.value.date = ""
 	}
 }
 
-const setDate = () => {
-	datePicker.value.showPicker()
+const setPriority = () => {
+	item.value.priority = !item.value.priority
 }
 
 </script>
 
 <template>
-	<div className="app-container">
-		<h2>Test</h2>
+	<div class=" w-[800px] m-0 p-3">
+		<h2 class="text-xl mb-2 p-2 w-fit border-solid border-b-2 border-gray-700"> {{ item.catagory }}</h2>
 
-		<div v-for="item in list" @click="deleteTask(item)" className="todo-list">
-			<div :key="item.id" className="text-container">
-				<p :key="item.id" className="item-title">
-					{{ item.task }}
+		<div v-for="task in list" @click="deleteTask(task)"
+			class="flex w-fit m-0 mb-1 p-2 rounded-xl transition ease-in-out hover:cursor-pointer hover:bg-gray-700">
+			<div :key="task.id" class="m-r mr-2">
+				<p :key="task.id" class="text-lg font-bold text-gray-100 m-0">
+					{{ task.task }}
 				</p>
-				<p v-if="item.description" :key="item.id" className="item-description">
-					{{ item.description }}
-				</p>
-			</div>
-			<div :key="item.id" className="date-container">
-				<p v-if="item.date" :key="item.id" className="item-date">
-					{{ item.date }}
+				<p v-if="task.description" :key="task.id"
+					class="text-base font-bold text-gray-500 m-0 ">
+					{{ task.description }}
 				</p>
 			</div>
+			<div v-if="!task.priority" :key="task.id" class="m-0">
+				<p v-if="task.date" :key="task.id" class="text-base text-gray-400 m-0">
+					{{ task.date }}
+				</p>
+			</div>
+			<div v-else :key="-task.id" class="m-0">
+				<p v-if="task.date" :key="task.id" class="text-base text-red-400 m-0">
+					{{ task.date }}
+				</p>
+			</div>
+
 		</div>
 
-		<div className="input-form">
+		<div class="flex-col mt-2 p-0 border-solid border-2 rounded-2xl border-gray-400">
+			<div class="flex-col m-0 p-4 border-solid border-b-2 border-gray-700">
+				<div class="flex">
+					<div>
+						<input v-model="item.task" type="text" placeholder="Task Name"
+							class="block text-lg font-bold text-white w-fit m-0 mb-1 border-none outline-none bg-transparent placeholder:text-gray-400">
+						<input v-model="item.description" type="text"
+							class="block text-lg font-bold text-white w-fit m-0 mb-1 border-none outline-none bg-transparent placeholder:text-gray-500"
+							placeholder="Description">
+					</div>
+					<p v-if="!item.priority" class="text-lg font-bold text-gray-500"> {{ item.date
+						}}
+					</p>
+					<p v-else class="text-lg font-bold text-red-400"> {{ item.date }}
+					</p>
+				</div>
 
-
-			<div className="input-field">
-				<input v-model="item.task" type="text" className="input-task" placeholder="Task Name">
-				<input v-model="item.description" type="text" className="input-description"
-					placeholder="Description">
-
-				<div className="button-container">
-					<button @click="setDate" className="task-date">Due date</button>
+				<div class="pt-2">
+					<button v-if="!dateButton" @click="setDate(true)" class="text-lg font-bold
+						text-white m-0 mr-2 px-4 py-2 border-solid border-2 border-gray-500
+						rounded-xl transition ease-in-out duration-200 hover:bg-gray-500">Due
+						date</button>
+					<button v-else @click="setDate(false)" class="text-lg font-bold
+						text-white m-0 mr-2 px-4 py-2 border-solid border-2 border-gray-500
+						rounded-xl bg-gray-500 transition ease-in-out duration-200 hover:bg-gray-600 hover:border-gray-600">Due
+						date</button>
 					<input v-model="item.date" ref="datePicker" type="date" style="display: none"
 						className="input-task-date" />
-					<button>Priority</button>
+					<button v-if="!item.priority" @click="setPriority"
+						class="text-lg font-bold text-white m-0 px-4 py-2 border-solid border-2 border-gray-500 rounded-xl transition ease-in-out duration-200 hover:bg-red-600 hover:border-red-600">Priority</button>
+					<button v-else
+						class="text-lg font-bold text-white m-0 px-4 py-2 border-solid border-2 border-red-600 rounded-xl bg-red-600 transition ease-in-out duration-200 hover:bg-red-700 hover:border-red-700"
+						@click="setPriority">Priority</button>
 					<!-- <button>Reminders</button> -->
 					<!-- <button>Extra</button> -->
 				</div>
 
 			</div>
 
-			<div className="input-submit">
-				<a>test</a>
-				<button @click="clearTask" className="cancel-button">Cancel</button>
-				<button type="submit" @click="addTask" className="add-button">Add task</button>
+			<div class="flex justify-center align-middle m-0 p-2">
+				<a
+					class="text-lg font-bold text-white m-auto ml-0 px-4 py-2 rounded-xl transition ease-in-out duration-200 hover:bg-gray-500 hover:border-gray-500">{{
+						item.catagory }}</a>
+				<button @click="clearTask"
+					class="text-lg font-bold text-white m-0 mr-2 px-4 py-2 border-solid border-2 border-gray-700 rounded-xl bg-gray-700 transition ease-in-out duration-200 hover:bg-gray-500 hover:border-gray-500">Cancel</button>
+				<button type="submit" @click="addTask"
+					class="text-lg font-bold text-white m-0 px-4 py-2 border-solid border-2 border-green-600 rounded-xl bg-green-600 transition ease-in-out duration-200 hover:bg-green-500 hover:border-green-500">Add
+					task</button>
 			</div>
 
 		</div>
 	</div>
 </template>
 
-<style scoped>
-.app-container {
-	font-size: 1.2rem;
-	width: 800px;
-
-	margin: 0px;
-	padding: 25px;
-}
-
-.app-container button {
-	font-size: 1.2rem;
-	font-weight: bold;
-	color: white;
-
-	margin: 0px;
-	margin-right: 10px;
-	padding: 10px 15px;
-
-	border: 2px solid hsl(0, 0%, 35%);
-	border-radius: 10px;
-	background-color: hsl(0, 0%, 8%);
-	transition: background-color 0.25s ease;
-}
-
-.app-container button:hover {
-	cursor: pointer;
-	background-color: hsl(0, 0%, 35%);
-}
-
-.app-container button:active {
-	cursor: pointer;
-	background-color: hsl(0, 0%, 8%);
-}
-
-.input-task-date::placeholder {
-	color: black;
-}
-
-.todo-list {
-	display: flex;
-	flex-direction: row;
-	width: fit-content;
-	margin: 0px;
-	margin-bottom: 5px;
-	padding: 15px;
-
-	border-radius: 15px;
-	transition: background-color 0.25s ease;
-}
-
-.todo-list:hover {
-	cursor: pointer;
-	background-color: hsl(0, 0%, 35%);
-}
-
-.todo-list p {
-	margin: 0px;
-	padding: 0px;
-}
-
-.todo-list .date-container {
-	font-weight: normal;
-	color: hsl(0, 0%, 80%);
-	margin-left: 10px;
-}
-
-.item-description {
-	margin: 5px;
-	font-size: 1.0rem;
-	font-weight: normal;
-	color: hsl(0, 0%, 60%);
-}
-
-.input-form {
-	margin-top: 10px;
-	padding: 0px;
-
-	border: 2px solid hsl(0, 0%, 60%);
-	border-radius: 14px;
-}
-
-.input-field {
-	display: flex;
-	flex-direction: column;
-
-	margin: 0px;
-	padding: 15px;
-
-	border-bottom: 2px solid hsl(0, 0%, 35%);
-}
-
-.input-field input {
-	font-size: 1.2rem;
-	font-weight: bold;
-	color: white;
-
-	margin: 0px;
-	margin-bottom: 10px;
-
-	border: none;
-	outline: none;
-	background-color: hsl(0, 0%, 8%);
-	user-select: none;
-}
-
-.input-task::placeholder {
-	color: hsl(0, 0%, 60%);
-}
-
-.button-container {
-	margin: 0px;
-	padding: 10px 0px;
-	padding-bottom: 0px;
-}
-
-.input-submit {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	margin: 0px;
-	padding: 10px;
-}
-
-.input-submit button {
-	margin: auto;
-	margin-right: 10px;
-
-	border: none;
-}
-
-.input-submit .cancel-button {
-	background-color: hsl(0, 0%, 28%);
-}
-
-.input-submit .add-button {
-	margin: 0px;
-	background-color: hsl(125, 100%, 25%);
-}
-
-.input-submit .add-button:hover {
-	background-color: hsl(125, 100%, 25%);
-}
-
-
-.input-submit .add-button:hover {
-	background-color: hsl(125, 100%, 35%);
-}
-
-.input-submit .add-button:active {
-	background-color: hsl(125, 100%, 25%);
-}
-
-
-.input-submit a {
-	margin: auto;
-	margin-left: 0px;
-	padding: 10px 15px;
-	border-radius: 15px;
-}
-
-.input-submit a:hover {
-	margin: auto;
-	margin-left: 0px;
-	padding: 10px 15px;
-	background-color: hsl(0, 0%, 35%);
-}
-</style>
+<style scoped></style>
