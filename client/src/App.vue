@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-
-var id = 0;
+import axios from 'axios'
 
 var datePicker = ref(null)
 var dateButton = ref(false)
@@ -15,54 +14,45 @@ var item = ref({
 	catagory: "Default"
 })
 
-var list = ref([
-	{
-		id: id++,
-		task: "Clean room",
-		description: "clean",
-		date: "2024-01-25",
-		priority: false,
-		catagory: "test"
-	},
-	{
-		id: id++,
-		task: "Feed Cats",
-		description: "feed",
-		date: "2024-01-25",
-		priority: true,
-		catagory: "test"
-	},
-	{
-		id: id++,
-		task: "Go to Gym",
-		description: "gym",
-		date: "2024-01-25",
-		priority: false,
-		catagory: "test"
-	}
-])
+var list = ref([])
 
-const addTask = () => {
+const addTask = async () => {
 	if (item.value.task.trim() !== "") {
-		list.value.push(item.value)
+		axios.post("http://localhost:5000/data", item.value)
+			.then(res => {
+				console.log(res)
+				list.value = res.data
+				item.value.id = list.value.length
+			})
+			.catch(error => {
+			})
+
 		item.value = {
-			id: 0,
+			id: item.value.id,
 			task: "",
 			description: "",
 			date: "",
 			priority: false,
 			catagory: "Default"
 		}
+		dateButton.value = false
 	}
 }
 
-const deleteTask = (item) => {
-	list.value = list.value.filter((task) => task !== item)
+const deleteTask = async (item) => {
+	axios.delete(`http://localhost:5000/data/${item.id}`)
+		.then(res => {
+			console.log(res)
+			list.value = res.data
+			item.value.id = list.value.length
+		})
+		.catch(error => {
+		})
 }
 
 const clearTask = () => {
 	item.value = {
-		id: 0,
+		id: item.value.id,
 		task: "",
 		description: "",
 		date: "",
@@ -87,6 +77,19 @@ const setDate = (b) => {
 const setPriority = () => {
 	item.value.priority = !item.value.priority
 }
+
+const getData = async () => {
+	axios.get("http://localhost:5000/data")
+		.then(res => {
+			list.value = res.data
+			item.value.id = list.value.length
+		})
+		.catch(error => {
+			console.error(error)
+		})
+}
+
+getData()
 
 </script>
 
