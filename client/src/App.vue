@@ -3,26 +3,41 @@ import { ref } from 'vue'
 
 var id = 0;
 
+var datePicker = ref(null)
+
 var item = ref({
 	id: 0,
 	task: "",
-	description: ""
+	description: "",
+	date: "",
+	priority: false,
+	catagory: ""
 })
+
 var list = ref([
 	{
 		id: id++,
 		task: "Clean room",
-		description: ""
+		description: "clean",
+		date: "2024-01-25",
+		priority: false,
+		catagory: "test"
 	},
 	{
 		id: id++,
 		task: "Feed Cats",
-		description: ""
+		description: "feed",
+		date: "2024-01-25",
+		priority: false,
+		catagory: "test"
 	},
 	{
 		id: id++,
 		task: "Go to Gym",
-		description: ""
+		description: "gym",
+		date: "2024-01-25",
+		priority: false,
+		catagory: "test"
 	}
 ])
 
@@ -38,7 +53,18 @@ const deleteTask = (item) => {
 }
 
 const clearTask = () => {
-	item.value = { id: 0, task: "", description: "" }
+	item.value = {
+		id: 0,
+		task: "",
+		description: "",
+		date: "",
+		priority: false,
+		catagory: ""
+	}
+}
+
+const setDate = () => {
+	datePicker.value.showPicker()
 }
 
 </script>
@@ -46,30 +72,48 @@ const clearTask = () => {
 <template>
 	<div className="app-container">
 		<h2>Test</h2>
-		<div v-for="item in list" className="todo-list">
-			<p :key="item.id" className="item-title" @click="deleteTask(item)">{{ item.task }}</p>
-			<p :key="item.id" className="item-description">{{ item.description }}</p>
+
+		<div v-for="item in list" @click="deleteTask(item)" className="todo-list">
+			<div :key="item.id" className="text-container">
+				<p :key="item.id" className="item-title">
+					{{ item.task }}
+				</p>
+				<p v-if="item.description" :key="item.id" className="item-description">
+					{{ item.description }}
+				</p>
+			</div>
+			<div :key="item.id" className="date-container">
+				<p v-if="item.date" :key="item.id" className="item-date">
+					{{ item.date }}
+				</p>
+			</div>
 		</div>
+
 		<div className="input-form">
-			<form @submit.prevent="addTask">
-				<div className="input-field">
-					<input v-model="item.task" type="text" className="input-task"
-						placeholder="Task Name">
-					<input v-model="item.description" type="text" className="input-description"
-						placeholder="Description">
-					<div className="button-container">
-						<button>Due date</button>
-						<button>Priority</button>
-						<button>Reminders</button>
-						<button>Extra</button>
-					</div>
+
+
+			<div className="input-field">
+				<input v-model="item.task" type="text" className="input-task" placeholder="Task Name">
+				<input v-model="item.description" type="text" className="input-description"
+					placeholder="Description">
+
+				<div className="button-container">
+					<button @click="setDate" className="task-date">Due date</button>
+					<input v-model="item.date" ref="datePicker" type="date" style="display: none"
+						className="input-task-date" />
+					<button>Priority</button>
+					<!-- <button>Reminders</button> -->
+					<!-- <button>Extra</button> -->
 				</div>
-				<div className="input-submit">
-					<a>test</a>
-					<button @click="clearTask" className="cancel-button">Cancel</button>
-					<button type="submit" className="add-button">Add task</button>
-				</div>
-			</form>
+
+			</div>
+
+			<div className="input-submit">
+				<a>test</a>
+				<button @click="clearTask" className="cancel-button">Cancel</button>
+				<button type="submit" @click="addTask" className="add-button">Add task</button>
+			</div>
+
 		</div>
 	</div>
 </template>
@@ -94,7 +138,7 @@ const clearTask = () => {
 
 	border: 2px solid hsl(0, 0%, 35%);
 	border-radius: 10px;
-	background-color: hsl(0, 0%, 20%);
+	background-color: hsl(0, 0%, 8%);
 	transition: background-color 0.25s ease;
 }
 
@@ -105,10 +149,16 @@ const clearTask = () => {
 
 .app-container button:active {
 	cursor: pointer;
-	background-color: hsl(0, 0%, 20%);
+	background-color: hsl(0, 0%, 8%);
+}
+
+.input-task-date::placeholder {
+	color: black;
 }
 
 .todo-list {
+	display: flex;
+	flex-direction: row;
 	width: fit-content;
 	margin: 0px;
 	margin-bottom: 5px;
@@ -120,12 +170,25 @@ const clearTask = () => {
 
 .todo-list:hover {
 	cursor: pointer;
-	background-color: hsl(0, 0%, 20%);
+	background-color: hsl(0, 0%, 35%);
 }
 
 .todo-list p {
 	margin: 0px;
 	padding: 0px;
+}
+
+.todo-list .date-container {
+	font-weight: normal;
+	color: hsl(0, 0%, 80%);
+	margin-left: 10px;
+}
+
+.item-description {
+	margin: 5px;
+	font-size: 1.0rem;
+	font-weight: normal;
+	color: hsl(0, 0%, 60%);
 }
 
 .input-form {
@@ -134,7 +197,6 @@ const clearTask = () => {
 
 	border: 2px solid hsl(0, 0%, 60%);
 	border-radius: 14px;
-	background-color: hsl(0, 0%, 20%);
 }
 
 .input-field {
@@ -147,7 +209,7 @@ const clearTask = () => {
 	border-bottom: 2px solid hsl(0, 0%, 35%);
 }
 
-.input-form input {
+.input-field input {
 	font-size: 1.2rem;
 	font-weight: bold;
 	color: white;
@@ -157,7 +219,7 @@ const clearTask = () => {
 
 	border: none;
 	outline: none;
-	background-color: hsl(0, 0%, 20%);
+	background-color: hsl(0, 0%, 8%);
 	user-select: none;
 }
 
