@@ -147,13 +147,12 @@ getData()
 						text-white m-0 mr-2 px-4 py-2 border-solid border-2 border-gray-500
 						rounded-xl bg-gray-500 transition ease-in-out duration-200 hover:bg-gray-600 hover:border-gray-600">Due
 						date</button>
-					<input v-model="item.date" ref="datePicker" type="date" style="display: none"
-						className="input-task-date" />
 					<button v-if="!item.priority" @click="setPriority"
 						class="text-lg font-bold text-white m-0 px-4 py-2 border-solid border-2 border-gray-500 rounded-xl transition ease-in-out duration-200 hover:bg-red-600 hover:border-red-600">Priority</button>
 					<button v-else
 						class="text-lg font-bold text-white m-0 px-4 py-2 border-solid border-2 border-red-600 rounded-xl bg-red-600 transition ease-in-out duration-200 hover:bg-red-700 hover:border-red-700"
 						@click="setPriority">Priority</button>
+					<input v-model="item.date" ref="datePicker" type="date" class="hidden" />
 					<!-- <button>Reminders</button> -->
 					<!-- <button>Extra</button> -->
 				</div>
