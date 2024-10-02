@@ -1,12 +1,7 @@
 const mongoose = require('mongoose')
 
-const ProductSchema = mongoose.Schema(
+const TaskSchema = mongoose.Schema(
 	{
-		id: {
-			type: Number,
-			required: true,
-			default: 0
-		},
 		task: {
 			type: String,
 			required: true,
@@ -14,27 +9,27 @@ const ProductSchema = mongoose.Schema(
 		},
 		description: {
 			type: String,
-			required: true,
+			required: false,
 			default: ""
 		},
 		date: {
 			type: String,
-			required: true,
+			required: false,
 			default: ""
 		},
 		priority: {
 			type: Boolean,
-			required: true,
+			required: false,
 			default: false
 		},
 		catagory: {
 			type: String,
-			required: true,
-			default: ""
+			required: false,
+			default: "Default"
 		},
 	}
 );
 
-const Product = mongoose.model("Task", ProductSchema);
+const Task = mongoose.model("Task", TaskSchema);
 
-module.exports = Product;
+module.exports = Task;

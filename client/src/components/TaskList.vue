@@ -4,6 +4,7 @@ import axios from 'axios'
 
 
 var list = ref([])
+var sortCategory = ref("Default")
 
 const deleteTask = async (task) => {
 	await axios.delete(`http://localhost:5000/data/${task._id}`)
@@ -27,17 +28,24 @@ const getTasks = async () => {
 		})
 }
 
+const setSortCategory = (category) => {
+	console.log(category)
+	sortCategory.value = category
+}
+
 getTasks()
 
 defineExpose({
-	getTasks
+	getTasks,
+	setSortCategory
 })
 
 </script>
 
 <template>
-	<h2 class="text-xl mb-2 p-2 w-fit border-solid border-b-2 border-gray-700">Default</h2>
-	<div v-for="task in list" :key="task._id" @click="deleteTask(task)"
+	<h2 class="text-xl mb-2 p-2 w-fit border-solid border-b-2 border-gray-700">{{ sortCategory }}</h2>
+	<div v-for="task in list.filter(task => task.catagory === sortCategory)" :key="task._id"
+		@click="deleteTask(task)"
 		class="flex w-fit m-0 mb-1 p-2 rounded-xl transition ease-in-out hover:cursor-pointer hover:bg-gray-700">
 		<div :key="task._id" class="m-r mr-2">
 			<p :key="task._id" class="text-lg font-bold text-gray-100 m-0">
@@ -47,12 +55,12 @@ defineExpose({
 				{{ task.description }}
 			</p>
 		</div>
-		<div v-if="!task.priority" :key="task._id" class="m-0">
+		<div v-if="!task.priority" :key="task._id + 1" class="m-0">
 			<p v-if="task.date" :key="task._id" class="text-base text-gray-400 m-0">
 				{{ task.date }}
 			</p>
 		</div>
-		<div v-else :key="task._id" class="m-0">
+		<div v-else :key="task._id + 0" class="m-0">
 			<p v-if="task.date" :key="task._id" class="text-base text-red-400 m-0">
 				{{ task.date }}
 			</p>
