@@ -25,4 +25,4 @@ app.use(express.json())
 app.use("/data", TaskRoute)
 app.use("/category", CategoryRoute)
 
-app.listen(5000);
+app.listen(5170);

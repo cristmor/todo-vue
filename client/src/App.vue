@@ -18,7 +18,7 @@ const onCategory = (category) => {
 </script>
 
 <template>
-	<div class=" w-[800px] m-0 p-3">
+	<div class=" w-fit m-0 p-3">
 		<TaskList ref="list" />
 		<InputTask @post="onPost" @category="onCategory" />
 	</div>

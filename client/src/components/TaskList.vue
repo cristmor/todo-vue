@@ -7,7 +7,7 @@ var list = ref([])
 var sortCategory = ref("Default")
 
 const deleteTask = async (task) => {
-	await axios.delete(`http://localhost:5000/data/${task._id}`)
+	await axios.delete(`/data/${task._id}`)
 		.then(res => {
 			console.log(res)
 		})
@@ -18,7 +18,7 @@ const deleteTask = async (task) => {
 }
 
 const getTasks = async () => {
-	await axios.get("http://localhost:5000/data")
+	await axios.get("/data")
 		.then(res => {
 			list.value = res.data
 			console.log(list.value)
@@ -43,30 +43,59 @@ defineExpose({
 </script>
 
 <template>
-	<h2 class="text-xl mb-2 p-2 w-fit border-solid border-b-2 border-gray-700">{{ sortCategory }}</h2>
-	<div v-for="task in list.filter(task => task.catagory === sortCategory)" :key="task._id"
-		@click="deleteTask(task)"
-		class="flex w-fit m-0 mb-1 p-2 rounded-xl transition ease-in-out hover:cursor-pointer hover:bg-gray-700">
-		<div :key="task._id" class="m-r mr-2">
-			<p :key="task._id" class="text-lg font-bold text-gray-100 m-0">
-				{{ task.task }}
-			</p>
-			<p v-if="task.description" :key="task._id" class="text-base font-bold text-gray-500 m-0 ">
-				{{ task.description }}
-			</p>
+	<TransitionGroup name="fade" appear mode="out-in">
+		<h2 class="text-xl mb-2 p-2 w-fit border-solid border-b-2 border-gray-700">{{ sortCategory }}
+		</h2>
+		<div v-for=" task in list.filter(task => task.catagory === sortCategory)" :key="task._id"
+			@click="deleteTask(task)"
+			class="flex w-fit m-0 mb-1 px-4 py-2 rounded-xl transition ease-in-out hover:cursor-pointer hover:bg-gray-700">
+			<div :key="task._id" class="m-r mr-2">
+				<p :key="task._id" class="text-lg font-bold text-gray-100 m-0">
+					{{ task.task }}
+				</p>
+				<p v-if="task.description" :key="task._id"
+					class="text-base font-bold text-gray-500 m-0 ">
+					{{ task.description }}
+				</p>
+			</div>
+			<div v-if="!task.priority" :key="task._id + 1" class="m-0">
+				<p v-if="task.date" :key="task._id" class="text-base text-gray-400 m-0">
+					{{ task.date }}
+				</p>
+			</div>
+			<div v-else :key="task._id + 0" class="m-0">
+				<p v-if="task.date" :key="task._id" class="text-base text-red-400 m-0">
+					{{ task.date }}
+				</p>
+			</div>
 		</div>
-		<div v-if="!task.priority" :key="task._id + 1" class="m-0">
-			<p v-if="task.date" :key="task._id" class="text-base text-gray-400 m-0">
-				{{ task.date }}
-			</p>
-		</div>
-		<div v-else :key="task._id + 0" class="m-0">
-			<p v-if="task.date" :key="task._id" class="text-base text-red-400 m-0">
-				{{ task.date }}
-			</p>
-		</div>
-	</div>
+	</TransitionGroup>
 
 </template>
 
-<style scoped></style>
+<style scoped>
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+	transform: scale(0.8);
+}
+
+.fade-enter-to,
+.fade-leave-from {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.fade-enter-active {
+	transition: 0.5s ease;
+}
+
+.fade-leave-active {
+	transition: 0.5s ease;
+	position: absolute;
+}
+
+.fade-move {
+	transition: 0.5s ease;
+}
+</style>
