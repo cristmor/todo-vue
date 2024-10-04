@@ -22,7 +22,7 @@ const TaskSchema = mongoose.Schema(
 			required: false,
 			default: false
 		},
-		catagory: {
+		category: {
 			type: String,
 			required: false,
 			default: "Default"
