@@ -1,9 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
-import InputTask from './components/InputTask.vue'
 
-const backend = ref()
+const backend = ref("")
 
 // Tasks refs
 var tasks = ref([])
