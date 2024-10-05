@@ -33,11 +33,16 @@ TODO-Vue is a tasks tracking web app. This web app allows a user to create, dele
 4. Add MongeDB connection in **/server/index.js**:
 ```javascript
 // Database
-  mongoose.connect("<add-connect-url-here>").then(() => {
+  mongoose.connect("<add-datebase-connection-url-here>").then(() => {
 	console.log("Connected to database!");
   }).catch(() => {
   	console.error("Connected failed!");
   })
+```
+
+5. Add back-end connection in **/client/App.vue**:
+```javascript
+  const backend = ref("<add-back-end-connection-url-here>")
 ```
 
 ## Usage
@@ -54,4 +59,4 @@ TODO-Vue is a tasks tracking web app. This web app allows a user to create, dele
 
 ## Web App
 
-![App Screenshot](https://github.com/cristmor/todo-vue/blob/main/client/src/readme-edit.gif)
+![App Screenshot](https://github.com/cristmor/todo-vue/blob/main/client/public/readme-edit.gif)
